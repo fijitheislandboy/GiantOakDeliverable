@@ -1,5 +1,7 @@
 In order to run this program, you will need to use pip to download the 'scrapy' and 'lxml' python libraries
 Link to documentation: https://docs.scrapy.org/en/latest/
+The scrapy library serves as the initial webScraper and the lxml library is used to handle scraping and parsing the html for
+each criminal's biographical details.
 
-You run the program with the arguments:
+You run the program with the command line arguments:
     scrapy runspider Main/main.py

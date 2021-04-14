@@ -12,7 +12,6 @@ wantedPerson = {'First Name': '',
                     'Offense':'','Crime Location': '', 'Crime Date': ' ', 'Ethnic Appearance': '', 'Height':'','Build':'','Gender': '', 'Hair Color':'','Hair Length':''},
                 'Other': {'Crime Details': '', 'Notable Features': ''}
                 }
-sublinks = []
 completeLinks = []
 personArray = []
 toJson = {"source_code":"UK_MWL","source_name":"UK Most Wanted List","source_url":"https://www.nationalcrimeagency.gov.uk/most-wanted-search","persons": personArray}
@@ -40,15 +39,11 @@ class crawler(scrapy.Spider):
         tag = workString[startIndex:len(workString)]
         appendUrl = tag[:tag.find('>') - 1]
         siteUrl = "https://www.nationalcrimeagency.gov.uk"
-        sublinks.append(appendUrl)
         return siteUrl + appendUrl
-# A function that takes in three arguments, the index of the location of the dict in personArray containing the criminal's
-    #information, the crime information, and the biographical information
-
     #Function to use the Crawler and parse the information from the website. Must be given the name parse in order
     #for the module to utilize it
     def parse(self, response, **kwargs):
-        global retrievedData, personArray, wantedPerson, sublinks, completeLinks
+        global retrievedData, personArray, wantedPerson,completeLinks
         siteData = response.xpath("//a[contains(@href, '/most-wanted/')]").extract()
         retrievedData = siteData
         for i in range(0,len(retrievedData)):
@@ -59,9 +54,12 @@ class crawler(scrapy.Spider):
         with open('CrawlerOutput.json','w') as output:
             json.dump(toJson,output)
         print('done')
+
+    # A function that takes in no arguments and sends requests to each url for the biographical information of the UK's
+    #most wanted criminals and returns an updated array containing information for all criminals on the page.
     def subLinkSearcher(self):
         # using a selector to retrieve the relevant page content
-        global retrievedData, personArray, wantedPerson, sublinks, completeLinks
+        global retrievedData, personArray, wantedPerson, completeLinks
         checkList = ['Location: ', 'Date of Incident: ', 'Crime: ', 'Sex: ', 'Height: ', 'Build: ', 'Hair Colour: ', 'Hair Length: ',
                      'Ethnic Appearance: ', 'Additional Information: ']
         for url in completeLinks:
@@ -77,10 +75,6 @@ class crawler(scrapy.Spider):
             biographicalData = xmltree.xpath("//*[@class='item-page most-wanted-grid']//span/text()")
             for title in range(0,len(biographicalData)):
                 biographicalData[title] = str(biographicalData[title])
-            # if (len(biographicalData) < 20):
-            #     biographicalDataCopy = [20]
-            #     for j in range(len(biographicalData), 20):
-            #         biographicalData.append('Not Given')
             for category in checkList:
                 try:
                     biographicalData.index(category)
@@ -104,5 +98,4 @@ class crawler(scrapy.Spider):
 
             personalInformation = ()
             personArray[updatePerson] = entry
-            # item = {'Replyinfo': xmltree.xpath("//*[@class='item-page most-wanted-grid']//span/text()").extract()}
         return personArray
