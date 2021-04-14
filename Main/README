@@ -1,0 +1,5 @@
+In order to run this program, you will need to use pip to download the 'scrapy' and 'lxml' python libraries
+Link to documentation: https://docs.scrapy.org/en/latest/
+
+You run the program with the arguments:
+    scrapy runspider Main/main.py
